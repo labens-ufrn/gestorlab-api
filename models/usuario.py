@@ -1,10 +1,11 @@
  
 import uuid
 from datetime import datetime
-from typing import Optional
-from sqlmodel import Field, SQLModel
+from typing import Optional, List
+from sqlmodel import Field, SQLModel, Relationship
+from __all_models import UsuarioLaboratorioAssociation, Laboratorio
 
-class Usuarios(SQLModel,table=True):
+class Usuario(SQLModel,table=True):
     __tablename__: str = 'usuarios'
 
     id: uuid.UUID = Field(
@@ -18,6 +19,7 @@ class Usuarios(SQLModel,table=True):
     registration: int = Field(nullable=False)
     email: str = Field(nullable=False)
     tel: Optional[int] = Field(nullable=True)
-    data_inicial: datetime = Field(default=datetime.now, nullable=False)
-    data_att: datetime = Field(default=datetime.now, nullable=False)
+    laboratorios: List[Laboratorio] = Relationship(back_populates="usuarios", secondary= UsuarioLaboratorioAssociation)
+    data_inicial: Optional[datetime] = Field(default=datetime.now, nullable=False)
+    data_up: Optional[datetime] = Field(default=datetime.now, nullable=False)
     tag: int = Field(default=2, nullable=False)

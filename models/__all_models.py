@@ -1,0 +1,6 @@
+from models.usuario import Usuario
+from models.laboratorio import Laboratorio
+from models.projeto import Projeto
+from models.associations import UsuarioLaboratorioAssociation
+from models.associations import UsuarioProjetoAssociation
+from models.associations import LaboratorioProjetoAssociation

@@ -25,7 +25,7 @@ async def get_session() -> AsyncGenerator: # type: ignore
 
 
 ## Função que descobre quem é o usuario pelo token
-async def get_current_user(db: Session = Depends(get_session), token: str = Depends(oauth2_schema)) -> UsuarioModel: # type: ignore
+async def get_current_user(db: Session = Depends(get_session), token: str = Depends(oauth2_schema)) -> Usuario: # type: ignore
     credential_exception: HTTPException = HTTPException(
         status_code= status.HTTP_401_UNAUTHORIZED,
         detail='Não foi possícel autenticar a credencial',

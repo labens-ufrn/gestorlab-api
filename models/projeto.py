@@ -1,16 +1,20 @@
 import uuid
 from datetime import datetime
-from typing import Optional, List
-from sqlmodel import Field, SQLModel, Relationship
+from sqlalchemy import String, Column
+from sqlalchemy.orm import relationship
+from core.config import settings
 
-class Projeto(SQLModel, table=True):
-    id: uuid.UUID = Field(primary_key=True, default=uuid.uuid4)
-    titulo: str = Field(nullable=False)
-    descricao: Optional[str] = Field(nullable=True)
-    laboratorio_id: uuid.UUID = Field(foreign_key="laboratorio.id", nullable=False)
-    autor_id: uuid.UUID = Field(foreign_key="usuario.id", nullable=False)
-    data_inicial: Optional[datetime] = Field(default=datetime.now, nullable=False)
-    data_up: Optional[datetime] = Field(default=datetime.now, nullable=False)
-    membros: List["UsuarioProjetoAssociation"] = Relationship(back_populates="projetos")
-    laboratorio: "Laboratorio" = Relationship(back_populates="projetos")
-    autor: "Usuario" = Relationship(back_populates="projetos")
+class Projeto(settings.DBBaseModel):
+    __tablename__='projetos'
+    id = Column(
+        autoincrement=True,
+        default_factory=uuid.uuid4,
+        primary_key=True,
+        nullable=False
+    )
+    titulo = Column(String(), nullable=False)
+    descricao= Column(String(), nullable=True)
+    autor_id= Column(String,foreign_key="usuario.id", nullable=False)
+    data_inicial= Column(default=datetime.now, nullable=False)
+    data_up= Column(default=datetime.now, nullable=False)
+    autor = relationship("Usuario", back_populates='projetos', lazy='joined')

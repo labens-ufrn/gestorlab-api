@@ -1,14 +1,21 @@
 import uuid
 from datetime import datetime
-from typing import Optional, List
-from sqlmodel import Field, SQLModel, Relationship
+from sqlalchemy import String, Column
+from sqlalchemy.orm import relationship
+from core.config import settings
 
-class Laboratorio(SQLModel, table=True):
-    id: uuid.UUID = Field(primary_key=True, default=uuid.uuid4)
-    nome: str = Field(nullable=False)
-    descricao: Optional[str] = Field(nullable=True)
-    email: Optional[str] = Field(nullable=True)
-    data_inicial: Optional[datetime] = Field(default=datetime.now, nullable=False)
-    data_up: Optional[datetime] = Field(default=datetime.now, nullable=False)
-    usuarios: List["UsuarioLaboratorioAssociation"] = Relationship(back_populates="laboratorios")
-    projetos: List["LaboratorioProjetoAssociation"] = Relationship(back_populates="laboratorios")
+class Laboratorio(settings.DBBaseModel):
+    __tablename__='laboratorios'
+    id = Column(
+        autoincrement=True,
+        default_factory=uuid.uuid4,
+        primary_key=True,
+        nullable=False
+    )
+    coordenador_id = Column(String, foreign_key="usuario.id", nullable=False)
+    nome = Column(String(256), nullable=False)
+    descricao = Column(String(5000), nullable=True)
+    email = Column(String(256), nullable=True)
+    data_inicial = Column(default=datetime.now, nullable=False)
+    data_up = Column(default=datetime.now, nullable=False)
+    coordenador = relationship("Usuario", back_populates='laboratorios', lazy='joined')

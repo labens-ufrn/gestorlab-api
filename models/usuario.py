@@ -14,9 +14,9 @@ class Usuario(settings.DBBaseModel):
         primary_key=True,
         nullable=False
     )
-    first_name = Column(String(256),nullable=False)
-    second_name= Column(String(256),nullable=False)
-    registration= Column(Integer, nullable=False)
+    primeiro_nome = Column(String(256),nullable=False)
+    segundo_nome= Column(String(256),nullable=False)
+    matricula= Column(Integer, nullable=False)
     email = Column(String(256),index=True, nullable=False, unique=True)
     tel = Column(Integer(11),nullable=True)
     # Definindo a relação com Laboratorio
@@ -34,5 +34,5 @@ class Usuario(settings.DBBaseModel):
     )
 
     data_inicial = Column(default=datetime.now, nullable=False)
-    data_up = Column(default=datetime.now, nullable=False)
-    tag: int = Column(Integer(1),default=1, nullable=False)
+    data_atualizacao = Column(default=datetime.now, nullable=False)
+    tag = Column(Integer(1),default=1, nullable=False)

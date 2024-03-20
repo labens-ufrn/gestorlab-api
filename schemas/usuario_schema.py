@@ -25,10 +25,8 @@ class UsuarioSchemaBase(BaseModel):
 class UsuarioSchemaCreate(UsuarioSchemaBase):
     senha: str
 
-class UsuarioSchemaLaboratorios(UsuarioSchemaBase):
+class UsuarioSchemaLaboratoriosAndProjetos(UsuarioSchemaBase):
     laboratorios: Optional[List[LaboratorioSchema]]
-
-class UsuarioSchemaProjetos(UsuarioSchemaBase):
     projetos: Optional[List[ProjetoSchema]]
 
 class UsuarioSchemaUp(UsuarioSchemaBase):

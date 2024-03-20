@@ -16,9 +16,10 @@ class Usuario(settings.DBBaseModel):
     )
     primeiro_nome = Column(String(256),nullable=False)
     segundo_nome= Column(String(256),nullable=False)
-    matricula= Column(Integer, nullable=False)
-    email = Column(String(256),index=True, nullable=False, unique=True)
+    matricula= Column(Integer, nullable=False, unique=True)
+    email = Column(String(256),index=True, nullable=False)
     tel = Column(Integer(11),nullable=True)
+    senha = Column(String(256), nullable=False)
     # Definindo a relação com Laboratorio
     laboratorios= relationship(
         "Laboratorio",

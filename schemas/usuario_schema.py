@@ -23,6 +23,10 @@ from schemas.projeto_schema import ProjetoSchema
 class UsuarioSchemaCreate(UsuarioSchemaBase):
     senha: str
 
+class UsuarioSchemaAddLaboratorio(UsuarioSchemaBase):
+    list_laboratorios: List[UUID4]
+class UsuarioSchemaAddProjeto(UsuarioSchemaBase):
+    list_Projetos: List[UUID4]
 class UsuarioSchemaLaboratoriosAndProjetos(UsuarioSchemaBase):
     laboratorios: Optional[List[LaboratorioSchema]]
     projetos: Optional[List[ProjetoSchema]]

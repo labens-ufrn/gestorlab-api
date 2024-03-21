@@ -28,13 +28,11 @@ def get_logado(usuario_logado: Usuario = Depends(get_current_user)):
 async def post_usuario(usuario: UsuarioSchemaCreate, db: AsyncSession = Depends(get_session)):
     novo_usuario: Usuario = Usuario(
         senha=gerar_hash_senha(usuario.senha),
-        primeiro_nome=usuario.nome,
-        segundo_nome=usuario.nome,
+        primeiro_nome=usuario.primeiro_nome,
+        segundo_nome=usuario.segundo_nome,
         email=usuario.email,
         matricula=usuario.matricula,
         tel=usuario.tel,
-        data_inicial= usuario.data_inicial,
-        data_atualizacao=usuario.data_atualizacao,
         tag=usuario.tag
     )
 

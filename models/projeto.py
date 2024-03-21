@@ -1,20 +1,17 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import String, Column
+from sqlalchemy import String, Column, ForeignKey
 from sqlalchemy.orm import relationship
 from core.config import settings
+from sqlalchemy.dialects.postgresql import UUID
 
 class Projeto(settings.DBBaseModel):
-    __tablename__='projetos'
-    id = Column(
-        autoincrement=True,
-        default_factory=uuid.uuid4,
-        primary_key=True,
-        nullable=False
-    )
-    titulo = Column(String(), nullable=False)
-    descricao= Column(String(), nullable=True)
-    autor_id= Column(String,foreign_key="usuario.id", nullable=False)
-    data_inicial= Column(default=datetime.now, nullable=False)
-    data_up= Column(default=datetime.now, nullable=False)
+    __tablename__ = 'projetos'
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    titulo = Column(String(256), nullable=False)
+    descricao = Column(String(5000), nullable=True)
+    autor_id = Column(UUID(as_uuid=True), ForeignKey("usuario.id"), nullable=False)
+    data_inicial = Column(String(256), default=lambda: datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable=False)
+    data_up = Column(String(256), default=lambda: datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable=False)
     autor = relationship("Usuario", back_populates='projetos', lazy='joined')

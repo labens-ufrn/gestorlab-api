@@ -1,11 +1,10 @@
 import uuid
 from datetime import datetime
-from typing import Optional, List
-from sqlalchemy import BigInteger, String, Column, Boolean
+from sqlalchemy import BigInteger, String, Column
 from sqlalchemy.orm import relationship
 from core.config import settings
 from sqlalchemy.dialects.postgresql import UUID
-
+from models.associetions import usuario_laboratorio_association, usuario_projeto_association
 class Usuario(settings.DBBaseModel):
     __tablename__ = 'usuario'
 
@@ -18,13 +17,14 @@ class Usuario(settings.DBBaseModel):
     senha = Column(String(256), nullable=False)
     laboratorios = relationship(
         "Laboratorio",
-        back_populates="coordenador",
+        secondary=usuario_laboratorio_association,
+        back_populates="membros",
         lazy="joined"
     )
     projetos = relationship(
         "Projeto",
-        back_populates="autor",
-        uselist=True,
+        secondary=usuario_projeto_association,
+        back_populates="membros",
         lazy="joined"
     )
     data_inicial = Column(String(256), default=lambda: datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable=False)

@@ -4,6 +4,7 @@ from sqlalchemy import String, Column, ForeignKey
 from sqlalchemy.orm import relationship
 from core.config import settings
 from sqlalchemy.dialects.postgresql import UUID
+from models.associetions import usuario_laboratorio_association
 
 class Laboratorio(settings.DBBaseModel):
     __tablename__ = 'laboratorios'
@@ -16,3 +17,9 @@ class Laboratorio(settings.DBBaseModel):
     data_inicial = Column(String(256), default=lambda: datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable=False)
     data_up = Column(String(256), default=lambda: datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable=False)
     coordenador = relationship("Usuario", back_populates='laboratorios', lazy='joined')
+    membros = relationship(
+        "Usuario",
+        secondary=usuario_laboratorio_association,
+        back_populates="laboratorios",
+        lazy="joined"
+    )

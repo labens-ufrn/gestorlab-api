@@ -4,7 +4,7 @@ from sqlalchemy import String, Column, ForeignKey
 from sqlalchemy.orm import relationship
 from core.config import settings
 from sqlalchemy.dialects.postgresql import UUID
-
+from models.associetions import usuario_projeto_association
 class Projeto(settings.DBBaseModel):
     __tablename__ = 'projetos'
 
@@ -15,3 +15,9 @@ class Projeto(settings.DBBaseModel):
     data_inicial = Column(String(256), default=lambda: datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable=False)
     data_up = Column(String(256), default=lambda: datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable=False)
     autor = relationship("Usuario", back_populates='projetos', lazy='joined')
+    membros = relationship(
+        "Usuario",
+        secondary=usuario_projeto_association,
+        back_populates="projetos",
+        lazy="joined"
+    )

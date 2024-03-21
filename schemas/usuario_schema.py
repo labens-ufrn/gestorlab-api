@@ -1,26 +1,22 @@
-from typing import Optional, List 
 
-from pydantic import BaseModel, EmailStr
+from typing import Optional, List 
+from pydantic import BaseModel, EmailStr, UUID4
 from datetime import datetime
 
-from schemas.laboratorio_schema import LaboratorioSchema
-from schemas.projeto_schema import ProjetoSchema
-
-#Base dos usuarios
 class UsuarioSchemaBase(BaseModel):
-    id: Optional[str] = None
+    id: Optional[UUID4] = None 
     primeiro_nome: str
     segundo_nome: str 
     email: EmailStr
-    matricula: str
+    matricula: int
     tel: int
-    data_inicial: datetime
-    data_atualizacao: datetime
     tag: int
 
-    class Config:
-        from_attributes = True
+class Config:
+    from_attributes = True
 
+from schemas.laboratorio_schema import LaboratorioSchema
+from schemas.projeto_schema import ProjetoSchema
 
 class UsuarioSchemaCreate(UsuarioSchemaBase):
     senha: str

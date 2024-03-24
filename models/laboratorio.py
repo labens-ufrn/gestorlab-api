@@ -13,7 +13,7 @@ class Laboratorio(settings.DBBaseModel):
     coordenador_id = Column(UUID(as_uuid=True), ForeignKey("usuario.id"), nullable=False)
     nome = Column(String(256), nullable=False)
     descricao = Column(String(5000), nullable=True)
-    email = Column(String(256), nullable=True)
+    email = Column(String(256), unique=True, nullable=True)
     data_inicial = Column(String(256), default=lambda: datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable=False)
     data_up = Column(String(256), default=lambda: datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable=False)
     coordenador = relationship("Usuario", back_populates='laboratorios', lazy='joined')

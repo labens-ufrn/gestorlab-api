@@ -20,4 +20,10 @@ class LaboratorioSchemaCreate(BaseModel):
     nome: str
     descricao: str
     email: EmailStr
-    lista_membros: Optional[List[UUID4]] = None
+    membros: Optional[List[UUID4]] = None
+
+class LaboratorioSchemaUp(BaseModel):
+    nome: Optional[str] = None
+    descricao: Optional[str] = None
+    email: Optional[EmailStr] = None
+    membros: Optional[List[UUID4]] = None

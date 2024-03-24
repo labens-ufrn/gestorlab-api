@@ -34,8 +34,8 @@ class UsuarioSchemaLaboratoriosAndProjetos(UsuarioSchemaBase):
 class UsuarioSchemaUp(UsuarioSchemaBase):
     primeiro_nome: Optional[str]
     segundo_nome: Optional[str] 
+    senha: Optional[str]
     email: Optional[EmailStr]
-    matricula: Optional[str]
+    matricula: Optional[int]
     tel: Optional[int]
-    data_atualizacao: datetime
     tag: Optional[int]

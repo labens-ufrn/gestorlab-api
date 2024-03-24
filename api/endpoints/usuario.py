@@ -9,11 +9,14 @@ from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
 
 from models.usuario import Usuario
+from models.laboratorio import Laboratorio
 from schemas.usuario_schema import UsuarioSchemaBase, UsuarioSchemaCreate, UsuarioSchemaUp, UsuarioSchemaLaboratoriosAndProjetos
 from core.deps import get_current_user, get_session
 from core.security import gerar_hash_senha
 from core.auth import autenticar, criar_token_acesso
 from sqlalchemy.orm import selectinload
+from datetime import datetime
+from sqlalchemy.orm import load_only
 
 
 router = APIRouter()
@@ -70,7 +73,7 @@ async def get_usuario(usuario_id: str, db: AsyncSession = Depends(get_session)):
         
 #PUT Usuario
 @router.put('/{usuario_id}', response_model=UsuarioSchemaBase, status_code=status.HTTP_202_ACCEPTED)
-async def put_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSession = Depends(get_session)):
+async def put_usuario(usuario_id: str, usuario: UsuarioSchemaUp, db: AsyncSession = Depends(get_session)):
     async with db as session:
         query= select(Usuario).filter(Usuario.id == usuario_id)
         result= await session.execute(query)
@@ -89,12 +92,10 @@ async def put_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSessio
                 usuario_up.senha = gerar_hash_senha(usuario.senha)
             if usuario.tag:
                 usuario_up.tag = usuario.tag
-            if usuario.data_inicial:
-                usuario_up.data_inicial = usuario.data_inicial
-            if usuario.data_atualizacao:
-                usuario_up.data_atualizacao = usuario.data_atualizacao
             if usuario.tel:
                 usuario_up.tel = usuario.tel
+
+            usuario_up.data_atualizacao = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
             await session.commit()
 
@@ -102,13 +103,25 @@ async def put_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSessio
         else:
             raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
         
-#DELETE Usuario
+
 @router.delete('/{usuario_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
+async def delete_usuario(usuario_id: str, db: AsyncSession = Depends(get_session)):
     async with db as session:
-        query= select(Usuario).filter(Usuario.id == usuario_id)
-        result= await session.execute(query)
-        usuario_del: UsuarioSchemaBase = result.scalars().unique().one_or_none()
+        # Verifica se o usuário é coordenador de algum laboratório
+        query_coordenador = select(Laboratorio).filter(Laboratorio.coordenador_id == usuario_id)
+        result_coordenador = await session.execute(query_coordenador)
+        laboratorios_coordenador: Laboratorio = result_coordenador.scalars().unique().one_or_none()
+
+        if laboratorios_coordenador:
+            raise HTTPException(
+                detail='Para você excluir sua conta, primeiro deve passar os direitos de coordenador para outro membro do laboratório!',
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Se o usuário não for coordenador de nenhum laboratório, exclui o usuário
+        query_usuario = select(Usuario).filter(Usuario.id == usuario_id)
+        result_usuario = await session.execute(query_usuario)
+        usuario_del: Usuario = result_usuario.scalars().unique().one_or_none()
 
         if usuario_del:
             await session.delete(usuario_del)
@@ -117,7 +130,6 @@ async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session
             return Response(status_code=status.HTTP_204_NO_CONTENT)
         else:
             raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
-        
 
 #POST Login
 @router.post('/login')

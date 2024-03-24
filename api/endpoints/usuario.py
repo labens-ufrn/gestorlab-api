@@ -13,6 +13,7 @@ from schemas.usuario_schema import UsuarioSchemaBase, UsuarioSchemaCreate, Usuar
 from core.deps import get_current_user, get_session
 from core.security import gerar_hash_senha
 from core.auth import autenticar, criar_token_acesso
+from sqlalchemy.orm import selectinload
 
 
 router = APIRouter()
@@ -55,13 +56,12 @@ async def get_usuarios(db: AsyncSession = Depends(get_session)):
 
         return usuarios
     
-#Get usuario
 @router.get('/{usuario_id}', response_model=UsuarioSchemaLaboratoriosAndProjetos, status_code=status.HTTP_200_OK)
-async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
+async def get_usuario(usuario_id: str, db: AsyncSession = Depends(get_session)):
     async with db as session:
-        query= select(Usuario).filter(Usuario.id == usuario_id)
-        result= await session.execute(query)
-        usuario: UsuarioSchemaLaboratoriosAndProjetos = result.scalars().unique().one_or_none()
+        query = select(Usuario).options(selectinload(Usuario.laboratorios), selectinload(Usuario.projetos)).filter(Usuario.id == usuario_id)
+        result = await session.execute(query)
+        usuario = result.scalars().first()
 
         if usuario:
             return usuario
